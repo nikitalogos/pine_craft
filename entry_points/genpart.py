@@ -143,4 +143,4 @@ if __name__ =='__main__':
     else:
         os.makedirs(part_dir)
 
-    part_drawer.write(f'{part_dir}/{args.name}.svg')
+    part_drawer.write(f'{part_dir}/{args.name}')

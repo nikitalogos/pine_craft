@@ -1,22 +1,32 @@
-from src.svg_drawing import SvgDrawing
+from collections.abc import Sequence
+
+from src.drawings.base_drawing import BaseDrawing
+from src.drawings.svg_drawing import SvgDrawing
+from src.drawings.dxf_drawing import DxfDrawing
 
 
 class PartDrawer:
-    def __init__(self, shape_wh, unit_size, pattern_drawer, fillet_radius=5):
-        self.drawing = SvgDrawing()
+    def __init__(self, shape_wh, unit_size, pattern_drawer, fillet_radius=5, drawings: Sequence[BaseDrawing] = None):
+        if drawings is None:
+            drawings = [
+                SvgDrawing(),
+                DxfDrawing(),
+            ]
+
+        self.drawings = drawings
 
         self.shape_wh = shape_wh
         self.unit_size = unit_size
         self.pattern_drawer = pattern_drawer
         self.fillet_radius = fillet_radius
 
-    def _draw_border(self):
+    def _draw_border(self, drawing):
         w, h = self.shape_wh
         w_mm = w * self.unit_size
         h_mm = h * self.unit_size
         fr = self.fillet_radius
 
-        d = self.drawing
+        d = drawing
 
         # ~~~lines~~~
         # top
@@ -67,8 +77,10 @@ class PartDrawer:
         )
 
     def draw(self):
-        self._draw_border()
-        self.pattern_drawer.draw(self.drawing)
+        for drawing in self.drawings:
+            self._draw_border(drawing)
+            self.pattern_drawer.draw(drawing)
 
     def write(self, file):
-        self.drawing.write(file)
+        for drawing in self.drawings:
+            drawing.write(file, is_no_ext=True)

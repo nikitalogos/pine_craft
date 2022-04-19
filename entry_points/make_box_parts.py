@@ -11,7 +11,8 @@ sys.path.append(
         '..'
     )
 )
-from src.svg_drawing import SvgDrawing
+from src.drawings.svg_drawing import SvgDrawing
+from src.drawings.dxf_drawing import DxfDrawing
 
 
 def make_holes(d):
@@ -43,9 +44,7 @@ def make_symmetric_shape(d, path_rel_to_center):
                 )
 
 
-def part_a():
-    d = SvgDrawing()
-
+def part_a(d):
     # ~~~lines~~~
     make_symmetric_shape(
         d=d,
@@ -61,15 +60,8 @@ def part_a():
     # ~~~holes~~~
     make_holes(d)
 
-    part_dir = f'box_part_a'
-    if not os.path.exists(part_dir):
-        os.makedirs(part_dir)
-    d.write(f'{part_dir}/box_part_a.svg')
 
-
-def part_b():
-    d = SvgDrawing()
-
+def part_b(d):
     # ~~~lines~~~
     make_symmetric_shape(
         d=d,
@@ -98,12 +90,27 @@ def part_b():
         color='green',
     )
 
-    part_dir = f'box_part_b'
-    if not os.path.exists(part_dir):
-        os.makedirs(part_dir)
-    d.write(f'{part_dir}/box_part_b.svg')
+
+def part(is_part_a: bool):
+    drawings = [
+        SvgDrawing(),
+        DxfDrawing()
+    ]
+    extensions = [
+        '.svg',
+        '.dxf'
+    ]
+    for d, ext in zip(drawings, extensions):
+        if is_part_a:
+            part_a(d)
+        else:
+            part_b(d)
+
+        name = f'box_part_{"a" if is_part_a else "b"}'
+        os.makedirs(name, exist_ok=True)
+        d.write(f'{name}/{name}{ext}')
 
 
 if __name__ =='__main__':
-    part_a()
-    part_b()
+    part(is_part_a=True)
+    part(is_part_a=False)
