@@ -87,6 +87,15 @@ class PatternDrawer:
                 color='red',
             )
 
+    def get_meta_dict(self):
+        return {
+            'shape_wh': self.shape_wh,
+            'unit_size': self.unit_size,
+            'first_hole_angle_deg': self.first_hole_angle_deg,
+            'holes_num': self.holes_num,
+            'hole_diameter': self.hole_diameter,
+        }
+
     def draw(self, drawing):
         w, h = self.shape_wh
         us = self.unit_size

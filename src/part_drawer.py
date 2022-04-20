@@ -1,3 +1,4 @@
+import json
 from collections.abc import Sequence
 
 from src.drawings.base_drawing import BaseDrawing
@@ -81,6 +82,21 @@ class PartDrawer:
             self._draw_border(drawing)
             self.pattern_drawer.draw(drawing)
 
+    def get_meta_dict(self):
+        return {
+            'shape_wh': self.shape_wh,
+            'unit_size': self.unit_size,
+            'pattern_drawer': self.pattern_drawer.get_meta_dict(),
+            'fillet_radius': self.fillet_radius,
+        }
+
     def write(self, file):
         for drawing in self.drawings:
             drawing.write(file, is_no_ext=True)
+
+        with open(f'{file}.json', 'w') as outf:
+            json.dump(
+                self.get_meta_dict(),
+                outf,
+                indent=4,
+            )
