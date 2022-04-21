@@ -78,6 +78,35 @@ class DxfDrawing(BaseDrawing):
             }
         )
 
+    def subdrawing(self, subdrawing_file, translate_xy, rotate_deg, is_no_ext=False):
+        if is_no_ext:
+            subdrawing_file_no_ext = subdrawing_file
+            subdrawing_file += '.dxf'
+        else:
+            subdrawing_file_no_ext = os.path.splitext(subdrawing_file)[0]
+
+        subdrawing_name = subdrawing_file_no_ext.split('/')[-1]
+
+        if subdrawing_name not in self.dxf.blocks:
+            block = self.dxf.blocks.new(
+                subdrawing_name
+            )
+            sub_dwg = ezdxf.readfile(subdrawing_file)
+            sub_msp = sub_dwg.modelspace()
+            for entity in sub_msp:
+                block.add_foreign_entity(
+                    entity,
+                    copy=True,
+                )
+
+        self.msp.add_blockref(
+            name=subdrawing_name,
+            insert=translate_xy,
+            dxfattribs={
+                'rotation': rotate_deg
+            }
+        )
+
     def write(self, file, is_no_ext=False):
         if is_no_ext:
             file += '.dxf'

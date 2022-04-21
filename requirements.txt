@@ -1,3 +1,5 @@
+pyyaml
 svgwrite
 ezdxf
 numpy
+scipy

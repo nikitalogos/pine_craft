@@ -1,7 +1,6 @@
 #!/bin/sh
 "exec" "`dirname $0`/../venv/bin/python" "$0" "$@"
 
-import argparse
 import os
 
 import sys
@@ -13,23 +12,8 @@ sys.path.append(
 )
 from src.pattern_drawer import PatternDrawer
 from src.part_drawer import PartDrawer
-
-
-class MyParser(argparse.ArgumentParser):
-    def add_argument(self, *args, **kwargs):
-        if '-h' not in args:
-            is_required = kwargs.get('required', False)
-            default = kwargs.get('default', None)
-            help = kwargs.get('help', '')
-
-            default_str = ''
-            if default is not None:
-                default_str = f", default: {default}"
-
-            help += f' ({"required" if is_required else "optional"}{default_str})'
-            kwargs['help'] = help
-
-        super().add_argument(*args, **kwargs)
+from src.utils.my_parser import MyParser
+from src.utils.utils import make_dir_with_user_ask
 
 
 if __name__ =='__main__':
@@ -104,6 +88,15 @@ if __name__ =='__main__':
     args = parser.parse_args()
     print(f'Generating {args.name}...')
 
+    # prepare output directory
+    base_dir = args.directory
+    if base_dir == '.':
+        base_dir = os.getcwd()
+
+    part_dir = f'{base_dir}/{args.name}'
+    make_dir_with_user_ask(part_dir)
+
+    # generate part
     shape_wh = (args.width, args.height)
 
     pattern_drawer = PatternDrawer(
@@ -120,27 +113,5 @@ if __name__ =='__main__':
         pattern_drawer=pattern_drawer,
         fillet_radius=args.fillet_radius,
     )
-
     part_drawer.draw()
-
-    base_dir = args.directory
-    if base_dir == '.':
-        base_dir = os.getcwd()
-
-    part_dir = f'{base_dir}/{args.name}'
-    if os.path.exists(part_dir):
-        print(f'{part_dir} exists! Do you want to overwrite it? y/n:')
-        while True:
-            inp = input()
-            if inp == 'n':
-                print('Abort genpart.py')
-                exit(0)
-            elif inp == 'y':
-                break
-            else:
-                print('Invalid choice. Please type y or n:')
-                continue
-    else:
-        os.makedirs(part_dir)
-
     part_drawer.write(f'{part_dir}/{args.name}')
