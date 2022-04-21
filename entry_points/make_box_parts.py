@@ -3,6 +3,7 @@
 
 import numpy as np
 import os
+import json
 
 import sys
 sys.path.append(
@@ -100,7 +101,8 @@ def part(is_part_a: bool):
         '.svg',
         '.dxf'
     ]
-    for d, ext in zip(drawings, extensions):
+    for idx, zipped in enumerate(zip(drawings, extensions)):
+        d, ext = zipped
         if is_part_a:
             part_a(d)
         else:
@@ -110,7 +112,17 @@ def part(is_part_a: bool):
         os.makedirs(name, exist_ok=True)
         d.write(f'{name}/{name}{ext}')
 
+        if idx == 0:
+            data_json = {
+                "shape_wh": [
+                    1, 1
+                ],
+                "unit_size": 30.0,
+            }
+            with open(f'{name}/{name}.json', 'w') as outf:
+                json.dump(data_json, outf, indent=4)
 
-if __name__ =='__main__':
+
+if __name__ == '__main__':
     part(is_part_a=True)
     part(is_part_a=False)

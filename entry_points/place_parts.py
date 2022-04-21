@@ -41,6 +41,12 @@ if __name__ =='__main__':
         default='.',
         help='Output directory',
     )
+    parser.add_argument(
+        '--hv_ratio',
+        type=float,
+        default=20.0,
+        help='Ratio between vertical and horizontal alignment of parts',
+    )
 
     args = parser.parse_args()
     print(f'Generating {args.name}...')
@@ -86,7 +92,7 @@ if __name__ =='__main__':
             'Placing together parts with different unit sizes is not supported!'
 
         unit_size = unit_sizes[0]
-        work_area_wh = (work_area_wh_mm // unit_size).astype(int)
+        work_area_wh = (work_area_wh_mm // unit_size).astype(int).tolist()
     except Exception as e:
         print('Error while processing config file:', e)
         exit(1)
@@ -100,7 +106,12 @@ if __name__ =='__main__':
     make_dir_with_user_ask(part_dir)
 
     # place parts
-    placer = PartsPlacer(parts, work_area_wh, unit_size)
-    placed_parts = placer.place()
-    placer.draw(placed_parts)
-    placer.write(f'{part_dir}/{args.name}.dxf')
+    placer = PartsPlacer(
+        parts=parts,
+        work_area_wh=work_area_wh,
+        unit_size=unit_size,
+        h_to_v_coef_ratio=args.hv_ratio,
+    )
+    placer.place()
+    placer.draw()
+    placer.write(f'{part_dir}/{args.name}')

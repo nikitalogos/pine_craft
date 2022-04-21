@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import ezdxf
+import math
 
 from .base_drawing import BaseDrawing
 
@@ -115,3 +116,35 @@ class DxfDrawing(BaseDrawing):
             assert ext == '.dxf'
 
         self.dxf.saveas(file)
+
+    def get_total_lines_length_mm(self, layout=None) -> float:
+        if layout is None:
+            layout = self.msp
+
+        total_length_mm = 0
+        for e in layout:
+            dxf_type = e.dxftype()
+
+            if dxf_type == 'INSERT':
+                block_name = e.dxf.name
+                block = self.dxf.blocks[block_name]
+                length = self.get_total_lines_length_mm(layout=block)
+            elif dxf_type == 'LINE':
+                length = (
+                    (e.dxf.start[0] - e.dxf.end[0]) ** 2 +
+                    (e.dxf.start[1] - e.dxf.end[1]) ** 2
+                ) ** 0.5
+            elif dxf_type == 'CIRCLE':
+                length = 2. * math.pi * e.dxf.radius
+            elif dxf_type == 'ARC':
+                total_angle = e.dxf.end_angle - e.dxf.start_angle
+                assert total_angle >= 0, 'This should never happen...'
+                length = np.deg2rad(total_angle) * e.dxf.radius
+            elif dxf_type == 'HATCH':
+                pass  # we do not take polygons into account, because they are meant to be engraved, not cut
+            else:
+                continue
+
+            total_length_mm += length
+
+        return total_length_mm

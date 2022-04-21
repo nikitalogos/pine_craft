@@ -1,0 +1,44 @@
+work_area:
+  width_mm: 1500
+  height_mm: 750
+parts:
+  # paths should be specified as absolute or as relative to this file
+
+  # ~~~~beams~~~~
+  - path: "out/parts/beam_1"
+    number: 50
+  - path: "out/parts/beam_2"
+    number: 60
+  - path: "out/parts/beam_3"
+    number: 25
+  - path: "out/parts/beam_5"
+    number: 25
+  - path: "out/parts/beam_7"
+    number: 50
+  - path: "out/parts/beam_10"
+    number: 50
+  - path: "out/parts/beam_14"
+    number: 50
+  - path: "out/parts/beam_20"
+    number: 50
+
+
+  # ~~~~small plates~~~~
+  - path: "out/parts/plate_2x2"
+    number: 30
+  - path: "out/parts/plate_2x3"
+    number: 20
+  - path: "out/parts/plate_2x4"
+    number: 20
+  - path: "out/parts/plate_3x3"
+    number: 20
+
+  # ~~~~sparse plates~~~~
+  - path: "out/parts/plate_10x10_sparse"
+    number: 10
+  - path: "out/parts/plate_10x15_sparse"
+    number: 4
+  - path: "out/parts/plate_10x20_sparse"
+    number: 6
+  - path: "out/parts/plate_10x30_sparse"
+    number: 4
