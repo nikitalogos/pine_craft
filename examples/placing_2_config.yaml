@@ -5,6 +5,6 @@ parts:
   # ~~~~box parts~~~~
   # one box requires part_a x2 and part_b x2
   - path: "out/parts/box_part_a"
-    number: 500
+    number: 625
   - path: "out/parts/box_part_b"
-    number: 500
+    number: 625

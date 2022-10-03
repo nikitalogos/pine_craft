@@ -7,9 +7,12 @@ from .base_drawing import BaseDrawing
 
 
 class DxfDrawing(BaseDrawing):
-    def __init__(self):
-        dxf = ezdxf.new()
-        dxf.units = ezdxf.units.MM
+    def __init__(self, file_name=None):
+        if file_name is None:
+            dxf = ezdxf.new()
+            dxf.units = ezdxf.units.MM
+        else:
+            dxf = ezdxf.readfile(file_name)
 
         msp = dxf.modelspace()
 
@@ -118,6 +121,9 @@ class DxfDrawing(BaseDrawing):
         self.dxf.saveas(file)
 
     def get_total_lines_length_mm(self, layout=None) -> float:
+        """Atetention: not all elements are supported.
+        Supported elements: INSERT, LINE, CIRCLE, ARC, SPLINE."""
+
         if layout is None:
             layout = self.msp
 
@@ -142,6 +148,14 @@ class DxfDrawing(BaseDrawing):
                 length = np.deg2rad(total_angle) * e.dxf.radius
             elif dxf_type == 'HATCH':
                 pass  # we do not take polygons into account, because they are meant to be engraved, not cut
+            elif e.dxftype() == 'SPLINE':
+                points = e._control_points
+                length = 0
+                for i in range(len(points) - 1):
+                    length += (
+                        (points[i][0] - points[i + 1][0]) ** 2 +
+                        (points[i][1] - points[i + 1][1]) ** 2
+                    ) ** 0.5
             else:
                 continue
 
