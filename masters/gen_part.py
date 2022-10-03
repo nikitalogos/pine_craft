@@ -34,31 +34,31 @@ class GenPart(BaseMaster):
         )
 
         parser.add_argument(
-            '--unit_size',
+            '--unit-size',
             type=float,
             default=30.0,
             help='Unit size in mm',
         )
         parser.add_argument(
-            '--fillet_radius',
+            '--fillet-radius',
             type=float,
             default=5.0,
             help='Radius of fillet on corners in mm',
         )
         parser.add_argument(
-            '--first_hole_angle_deg',
+            '--first-hole-angle-deg',
             type=float,
             default=0.0,
             help='Angle of first hole from zero in degrees (counterclockwise, zero is from the right)',
         )
         parser.add_argument(
-            '--holes_num',
+            '--holes-num',
             type=int,
             default=4,
             help='Number of holes in mm',
         )
         parser.add_argument(
-            '--hole_diameter',
+            '--hole-diameter',
             type=float,
             default=4.0,
             help='Diameter of hole in mm',
