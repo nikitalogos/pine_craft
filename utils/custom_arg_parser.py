@@ -1,7 +1,7 @@
 import argparse
 
 
-class MyParser(argparse.ArgumentParser):
+class CustomArgParser(argparse.ArgumentParser):
     def add_argument(self, *args, **kwargs):
         if '-h' not in args:
             is_required = kwargs.get('required', False)

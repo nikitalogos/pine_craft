@@ -3,3 +3,4 @@ svgwrite
 ezdxf
 numpy
 scipy
+argcomplete

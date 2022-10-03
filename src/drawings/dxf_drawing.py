@@ -7,12 +7,12 @@ from .base_drawing import BaseDrawing
 
 
 class DxfDrawing(BaseDrawing):
-    def __init__(self, file_name=None):
-        if file_name is None:
+    def __init__(self, file_path=None):
+        if file_path is None:
             dxf = ezdxf.new()
             dxf.units = ezdxf.units.MM
         else:
-            dxf = ezdxf.readfile(file_name)
+            dxf = ezdxf.readfile(file_path)
 
         msp = dxf.modelspace()
 
