@@ -3,9 +3,9 @@ import os
 import json
 from argparse import Namespace
 
-from src.drawings.base_drawing import BaseDrawing
-from src.drawings.svg_drawing import SvgDrawing
-from src.drawings.dxf_drawing import DxfDrawing
+from drawings.base_drawing import BaseDrawing
+from drawings.svg_drawing import SvgDrawing
+from drawings.dxf_drawing import DxfDrawing
 from masters.base_master import BaseMaster
 from utils.custom_arg_parser import CustomArgParser
 from constants.constants import UNIT_SIZE_MM, HOLE_DIAMETER_MM, MATERIAL_THICKNESS_MM

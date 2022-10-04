@@ -10,9 +10,9 @@ import numpy as np
 import os.path
 from argparse import Namespace
 
-from src.parts_placer import PartsPlacer, Part
-from src.utils.utils import make_dir_with_user_ask
 from masters.base_master import BaseMaster
+from tools.parts_placer import PartsPlacer, Part
+from utils.utils import make_dir_with_user_ask
 from utils.custom_arg_parser import CustomArgParser
 
 

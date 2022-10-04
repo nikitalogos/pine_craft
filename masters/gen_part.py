@@ -3,10 +3,10 @@ from argparse import Namespace
 
 from constants.constants import UNIT_SIZE_MM, HOLE_DIAMETER_MM, FILLET_RADIUS_MM, HOLES_NUM
 
-from src.pattern_drawer import PatternDrawer
-from src.part_drawer import PartDrawer
-from src.utils.utils import make_dir_with_user_ask
 from masters.base_master import BaseMaster
+from tools.pattern_drawer import PatternDrawer
+from tools.part_drawer import PartDrawer
+from utils.utils import make_dir_with_user_ask
 from utils.custom_arg_parser import CustomArgParser
 
 

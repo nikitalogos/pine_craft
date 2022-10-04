@@ -1,9 +1,9 @@
 import json
 from collections.abc import Sequence
 
-from src.drawings.base_drawing import BaseDrawing
-from src.drawings.svg_drawing import SvgDrawing
-from src.drawings.dxf_drawing import DxfDrawing
+from drawings.base_drawing import BaseDrawing
+from drawings.svg_drawing import SvgDrawing
+from drawings.dxf_drawing import DxfDrawing
 
 
 class PartDrawer:

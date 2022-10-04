@@ -6,7 +6,7 @@ from typing import Tuple, NamedTuple
 from dataclasses import dataclass
 from collections.abc import Sequence, MutableSequence
 
-from src.drawings.dxf_drawing import DxfDrawing
+from drawings.dxf_drawing import DxfDrawing
 
 
 @dataclass

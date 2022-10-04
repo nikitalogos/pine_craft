@@ -1,7 +1,7 @@
 import os.path
 from argparse import Namespace
 
-from src.drawings.dxf_drawing import DxfDrawing
+from drawings.dxf_drawing import DxfDrawing
 from masters.base_master import BaseMaster
 from utils.custom_arg_parser import CustomArgParser
 
