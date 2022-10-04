@@ -6,112 +6,106 @@ import yaml
 import json
 import numpy as np
 
-import sys
-sys.path.append(
-    os.path.join(
-        os.path.dirname(__file__),
-        '..'
-    )
-)
+
+import os.path
+from argparse import Namespace
+
 from src.parts_placer import PartsPlacer, Part
-from src.utils.my_parser import MyParser
 from src.utils.utils import make_dir_with_user_ask
+from masters.base_master import BaseMaster
+from utils.custom_arg_parser import CustomArgParser
 
 
-if __name__ =='__main__':
-    parser = MyParser(description='Parts placer. Arranges parts in efficient way for manufacturing on CNC.')
-    parser.add_argument(
-        '-c',
-        '--config',
-        type=str,
-        required=True,
-        help='Config file in yaml format',
-    )
-    parser.add_argument(
-        '-n',
-        '--name',
-        type=str,
-        required=True,
-        help='Parts layout name',
-    )
-    parser.add_argument(
-        '-d',
-        '--directory',
-        type=str,
-        default='.',
-        help='Output directory',
-    )
-    parser.add_argument(
-        '--hv_ratio',
-        type=float,
-        default=20.0,
-        help='Ratio between vertical and horizontal alignment of parts',
-    )
+class PlaceParts(BaseMaster):
+    @classmethod
+    def make_subparser(cls, parser: CustomArgParser):
+        parser.add_argument(
+            '-i',
+            '--input',
+            type=str,
+            required=True,
+            help='Source file with instructions in YAML format',
+        )
+        parser.add_argument(
+            '-o',
+            '--output',
+            type=str,
+            required=True,
+            help='Path to output directory. Results will be placed it that directory '
+                 'and named after the last directory in the path',
+        )
+        parser.add_argument(
+            '-r',
+            '--hv_ratio',
+            type=float,
+            default=20.0,
+            help='Ratio between vertical and horizontal alignment of parts',
+        )
 
-    args = parser.parse_args()
-    print(f'Generating {args.name}...')
+    @staticmethod
+    def run(args: Namespace):
+        output_name = os.path.basename(args.output)
+        print(f'Generating {output_name}...')
 
-    # validate input
-    with open(args.config, 'r') as inf:
-        data = yaml.safe_load(inf)
+        # validate input
+        with open(args.input, 'r') as inf:
+            data = yaml.safe_load(inf)
 
-    try:
-        work_area_wh_mm = np.array([
-            data['work_area']['width_mm'],
-            data['work_area']['height_mm'],
-        ])
+        parts = None
+        work_area_wh = None
+        unit_size = None
+        try:
+            work_area_wh_mm = np.array([
+                data['work_area']['width_mm'],
+                data['work_area']['height_mm'],
+            ])
 
-        parts = []
-        unit_sizes = []
-        for part in data['parts']:
-            part_dir = part['path']
-            part_name = part_dir.split('/')[-1]
+            parts = []
+            unit_sizes = []
+            for part in data['parts']:
+                part_dir = part['path']
+                part_name = part_dir.split('/')[-1]
 
-            if not os.path.isabs(part_dir):
-                config_file_dir = os.path.dirname(args.config)
-                part_dir = os.path.join(
-                    config_file_dir,
-                    part_dir
+                if not os.path.isabs(part_dir):
+                    config_file_dir = os.path.dirname(args.input)
+                    part_dir = os.path.join(
+                        config_file_dir,
+                        part_dir
+                    )
+                part_path = f'{part_dir}/{part_name}.json'
+
+                with open(part_path, 'r') as inf:
+                    part_meta = json.load(inf)
+
+                parts.append(
+                    Part(
+                        name=part_name,
+                        path_no_ext=os.path.splitext(part_path)[0],
+                        shape_wh=part_meta['shape_wh'],
+                        number=part['number'],
+                    )
                 )
-            part_path = f'{part_dir}/{part_name}.json'
+                unit_sizes.append(part_meta['unit_size'])
 
-            with open(part_path, 'r') as inf:
-                part_meta = json.load(inf)
+            assert len(np.unique(np.array(unit_sizes))) == 1, \
+                'Placing together parts with different unit sizes is not supported!'
 
-            parts.append(
-                Part(
-                    name=part_name,
-                    path_no_ext=os.path.splitext(part_path)[0],
-                    shape_wh=part_meta['shape_wh'],
-                    number=part['number'],
-                )
-            )
-            unit_sizes.append(part_meta['unit_size'])
+            unit_size = unit_sizes[0]
+            work_area_wh = (work_area_wh_mm // unit_size).astype(int).tolist()
+        except Exception as e:
+            print('Error while processing config file:', e)
+            exit(1)
 
-        assert len(np.unique(np.array(unit_sizes))) == 1, \
-            'Placing together parts with different unit sizes is not supported!'
+        # prepare output directory
+        make_dir_with_user_ask(args.output)
 
-        unit_size = unit_sizes[0]
-        work_area_wh = (work_area_wh_mm // unit_size).astype(int).tolist()
-    except Exception as e:
-        print('Error while processing config file:', e)
-        exit(1)
-
-    # prepare output directory
-    base_dir = args.directory
-    if base_dir == '.':
-        base_dir = os.getcwd()
-
-    part_dir = f'{base_dir}/{args.name}'
-    make_dir_with_user_ask(part_dir)
-
-    # place parts
-    placer = PartsPlacer(
-        parts=parts,
-        work_area_wh=work_area_wh,
-        unit_size=unit_size,
-        h_to_v_coef_ratio=args.hv_ratio,
-    )
-    placer.place()
-    placer.draw()
-    placer.write(f'{part_dir}/{args.name}')
+        # place parts
+        placer = PartsPlacer(
+            parts=parts,
+            work_area_wh=work_area_wh,
+            unit_size=unit_size,
+            h_to_v_coef_ratio=args.hv_ratio,
+        )
+        placer.place()
+        placer.draw()
+        placer.write(file_no_ext=f'{args.output}/{output_name}')

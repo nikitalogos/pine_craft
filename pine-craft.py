@@ -7,9 +7,10 @@ import argcomplete
 from typing import NamedTuple
 
 from masters.base_master import BaseMaster
-from masters.gen_part import GenPart
 from masters.cut_length import CutLength
 from masters.gen_box import GenBox
+from masters.gen_part import GenPart
+from masters.place_parts import PlaceParts
 
 from utils.custom_arg_parser import CustomArgParser
 
@@ -21,9 +22,10 @@ class Master(NamedTuple):
 
 
 MASTERS = [
-    Master(GenPart(), 'gen-part', 'Part generator'),
+    Master(CutLength(), 'cut-length', 'Compute total curves length in a file'),
     Master(GenBox(), 'gen-box', 'Generate box parts A and B'),
-    Master(CutLength(), 'cut-length', 'Compute total curves length in a file')
+    Master(GenPart(), 'gen-part', 'Part generator'),
+    Master(PlaceParts(), 'place-parts', 'Parts placer. Arranges parts in efficient way for manufacturing on CNC.'),
 ]
 
 
