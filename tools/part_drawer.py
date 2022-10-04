@@ -1,4 +1,4 @@
-import json
+import yaml
 from collections.abc import Sequence
 
 from drawings.base_drawing import BaseDrawing
@@ -94,9 +94,8 @@ class PartDrawer:
         for drawing in self.drawings:
             drawing.write(file, is_no_ext=True)
 
-        with open(f'{file}.json', 'w') as outf:
-            json.dump(
+        with open(f'{file}.yaml', 'w') as outf:
+            yaml.safe_dump(
                 self.get_meta_dict(),
                 outf,
-                indent=4,
             )

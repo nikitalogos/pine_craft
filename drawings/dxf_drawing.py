@@ -161,4 +161,4 @@ class DxfDrawing(BaseDrawing):
 
             total_length_mm += length
 
-        return total_length_mm
+        return float(total_length_mm)

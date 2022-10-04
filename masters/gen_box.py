@@ -1,6 +1,6 @@
 import numpy as np
 import os
-import json
+import yaml
 from argparse import Namespace
 
 from drawings.base_drawing import BaseDrawing
@@ -154,14 +154,14 @@ class GenBox(BaseMaster):
 
             # write metadata
             if idx == 0:
-                data_json = {
+                data = {
                     "shape_wh": [
                         1, 1
                     ],
                     "unit_size": self.unit_size,
                 }
-                with open(f'{base_dir}/{name}.json', 'w') as outf:
-                    json.dump(data_json, outf, indent=4)
+                with open(f'{base_dir}/{name}.yaml', 'w') as outf:
+                    yaml.safe_dump(data, outf)
 
     def run(self, args: Namespace):
         print('Generating box parts...')

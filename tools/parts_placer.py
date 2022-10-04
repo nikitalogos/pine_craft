@@ -1,5 +1,5 @@
 import copy
-import json
+import yaml
 import scipy.signal
 import numpy as np
 from typing import Tuple, NamedTuple
@@ -239,12 +239,8 @@ class PartsPlacer:
             'sheets_number': self.sheets_number,
             'total_length_m':  total_length_m
         }
-        print(data)
-        with open(f'{file_no_ext}.json', 'w') as outf:
-            json.dump(
-                data,
-                outf,
-                indent=4,
-            )
+        print(yaml.safe_dump(data))
+        with open(f'{file_no_ext}.yaml', 'w') as outf:
+            yaml.safe_dump(data, outf)
 
 

@@ -3,7 +3,6 @@
 
 import os
 import yaml
-import json
 import numpy as np
 
 
@@ -70,10 +69,10 @@ class PlaceParts(BaseMaster):
                         config_file_dir,
                         part_dir
                     )
-                part_path = f'{part_dir}/{part_name}.json'
+                part_path = f'{part_dir}/{part_name}.yaml'
 
                 with open(part_path, 'r') as inf:
-                    part_meta = json.load(inf)
+                    part_meta = yaml.safe_load(inf)
 
                 parts.append(
                     Part(
