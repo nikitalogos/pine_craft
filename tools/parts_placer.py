@@ -239,6 +239,7 @@ class PartsPlacer:
             'sheets_number': self.sheets_number,
             'total_length_m':  total_length_m
         }
+        print()
         print(yaml.safe_dump(data))
         with open(f'{file_no_ext}.yaml', 'w') as outf:
             yaml.safe_dump(data, outf)

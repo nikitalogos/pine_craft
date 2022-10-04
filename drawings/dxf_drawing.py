@@ -19,18 +19,21 @@ class DxfDrawing(BaseDrawing):
         self.dxf = dxf
         self.msp = msp
 
-    def _color(self, color_str):
-        if color_str is None:
-            color_str = self.DEFAULT_COLOR
+    def _color(self, color: str or int):
+        if type(color) == int:
+            return color
 
-        if color_str == 'black':
+        if color is None:
+            color = self.DEFAULT_COLOR
+
+        if color == 'black':
             return ezdxf.enums.ACI.BLACK
-        elif color_str == 'red':
+        elif color == 'red':
             return ezdxf.enums.ACI.RED
-        elif color_str == 'green':
+        elif color == 'green':
             return ezdxf.enums.ACI.GREEN
         else:
-            raise Exception(f'Unsupported color: {color_str}!')
+            raise Exception(f'Unsupported color: {color}!')
 
     def line(self, p0, p1, color=None):
         self.msp.add_line(
@@ -83,33 +86,51 @@ class DxfDrawing(BaseDrawing):
         )
 
     def subdrawing(self, subdrawing_file, translate_xy, rotate_deg, is_no_ext=False):
+        """Attention: not all elements are supported.
+        Supported elements: LINE, CIRCLE, ARC, SPLINE."""
+
         if is_no_ext:
-            subdrawing_file_no_ext = subdrawing_file
             subdrawing_file += '.dxf'
-        else:
-            subdrawing_file_no_ext = os.path.splitext(subdrawing_file)[0]
+        sub_dwg = DxfDrawing(file_path=subdrawing_file)
 
-        subdrawing_name = subdrawing_file_no_ext.split('/')[-1]
+        fi = np.deg2rad(rotate_deg)
+        rot_matrix = np.array([
+            [np.cos(fi), -np.sin(fi)],
+            [np.sin(fi), np.cos(fi)],
+        ])
 
-        if subdrawing_name not in self.dxf.blocks:
-            block = self.dxf.blocks.new(
-                subdrawing_name
-            )
-            sub_dwg = ezdxf.readfile(subdrawing_file)
-            sub_msp = sub_dwg.modelspace()
-            for entity in sub_msp:
-                block.add_foreign_entity(
-                    entity,
-                    copy=True,
+        def transform_point(p):
+            p = (p[0], p[1])
+            p = np.matmul(rot_matrix, p) + translate_xy
+            return p
+
+        for e in sub_dwg.msp:
+            dxf_type = e.dxftype()
+            if dxf_type == 'LINE':
+                p0 = transform_point(e.dxf.start)
+                p1 = transform_point(e.dxf.end)
+                self.line(p0, p1, color=e.dxf.color)
+            elif dxf_type == 'CIRCLE':
+                center = transform_point(e.dxf.center)
+                diameter = e.dxf.radius * 2
+                self.circle(center, diameter, color=e.dxf.color)
+            elif dxf_type == 'ARC':
+                center = transform_point(e.dxf.center)
+                self.msp.add_arc(
+                    center=center,
+                    radius=e.dxf.radius,
+                    start_angle=e.dxf.start_angle + rotate_deg,
+                    end_angle=e.dxf.end_angle + rotate_deg,
+                    dxfattribs={'color': e.dxf.color}
                 )
-
-        self.msp.add_blockref(
-            name=subdrawing_name,
-            insert=translate_xy,
-            dxfattribs={
-                'rotation': rotate_deg
-            }
-        )
+            elif dxf_type == 'HATCH':
+                points = e.paths.paths[0].vertices
+                points_t = []
+                for point in points:
+                    points_t.append(transform_point(point))
+                self.polygon_filled(points_t, color=e.dxf.color)
+            else:
+                raise Exception(f'Unsupported element type: {dxf_type}')
 
     def write(self, file, is_no_ext=False):
         if is_no_ext:
@@ -121,7 +142,7 @@ class DxfDrawing(BaseDrawing):
         self.dxf.saveas(file)
 
     def get_total_lines_length_mm(self, layout=None) -> float:
-        """Atetention: not all elements are supported.
+        """Attention: not all elements are supported.
         Supported elements: INSERT, LINE, CIRCLE, ARC, SPLINE."""
 
         if layout is None:
@@ -148,16 +169,16 @@ class DxfDrawing(BaseDrawing):
                 length = np.deg2rad(total_angle) * e.dxf.radius
             elif dxf_type == 'HATCH':
                 pass  # we do not take polygons into account, because they are meant to be engraved, not cut
-            elif e.dxftype() == 'SPLINE':
-                points = e._control_points
-                length = 0
-                for i in range(len(points) - 1):
-                    length += (
-                        (points[i][0] - points[i + 1][0]) ** 2 +
-                        (points[i][1] - points[i + 1][1]) ** 2
-                    ) ** 0.5
+            # elif e.dxftype() == 'SPLINE':
+            #     points = e._control_points
+            #     length = 0
+            #     for i in range(len(points) - 1):
+            #         length += (
+            #             (points[i][0] - points[i + 1][0]) ** 2 +
+            #             (points[i][1] - points[i + 1][1]) ** 2
+            #         ) ** 0.5
             else:
-                continue
+                raise Exception(f'Unsupported element type: {dxf_type}')
 
             total_length_mm += length
 
