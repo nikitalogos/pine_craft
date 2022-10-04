@@ -30,9 +30,8 @@ class PlaceParts(BaseMaster):
             '-o',
             '--output',
             type=str,
-            required=True,
-            help='Path to output directory. Results will be placed it that directory '
-                 'and named after the last directory in the path',
+            default='.',
+            help='Path to output directory. Results will be placed in subdirectory of this directory',
         )
         parser.add_argument(
             '--hv_ratio',
@@ -43,8 +42,8 @@ class PlaceParts(BaseMaster):
 
     @staticmethod
     def run(args: Namespace):
-        output_name = os.path.basename(args.output)
-        print(f'Generating {output_name} from {os.path.basename(args.input)}...')
+        name = os.path.basename(os.path.splitext(args.input)[0])
+        print(f'Generating placing "{name}"...')
 
         # validate input
         with open(args.input, 'r') as inf:
@@ -96,7 +95,8 @@ class PlaceParts(BaseMaster):
             exit(1)
 
         # prepare output directory
-        make_dir_with_user_ask(args.output)
+        base_dir = f'{args.output}/{name}'
+        make_dir_with_user_ask(base_dir)
 
         # place parts
         placer = PartsPlacer(
@@ -107,4 +107,4 @@ class PlaceParts(BaseMaster):
         )
         placer.place()
         placer.draw()
-        placer.write(file_no_ext=f'{args.output}/{output_name}')
+        placer.write(file_no_ext=f'{base_dir}/{name}')

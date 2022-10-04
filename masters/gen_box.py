@@ -24,7 +24,7 @@ class GenBox(BaseMaster):
             '-o',
             '--output',
             type=str,
-            required=True,
+            default='.',
             help='Path to output directory. Results will be placed in subdirectories of this directory',
         )
 
