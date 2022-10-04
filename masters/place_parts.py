@@ -35,7 +35,6 @@ class PlaceParts(BaseMaster):
                  'and named after the last directory in the path',
         )
         parser.add_argument(
-            '-r',
             '--hv_ratio',
             type=float,
             default=20.0,

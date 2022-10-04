@@ -1,6 +1,8 @@
 import os
 from argparse import Namespace
 
+from constants.constants import UNIT_SIZE_MM, HOLE_DIAMETER_MM, FILLET_RADIUS_MM, HOLES_NUM
+
 from src.pattern_drawer import PatternDrawer
 from src.part_drawer import PartDrawer
 from src.utils.utils import make_dir_with_user_ask
@@ -11,6 +13,15 @@ from utils.custom_arg_parser import CustomArgParser
 class GenPart(BaseMaster):
     @classmethod
     def make_subparser(cls, parser: CustomArgParser):
+        parser.add_argument(
+            '-o',
+            '--output',
+            type=str,
+            required=True,
+            help='Path to output directory. Results will be placed it that directory '
+                 'and named after the last directory in the path',
+        )
+
         parser.add_argument(
             '-w',
             '--width',
@@ -36,13 +47,13 @@ class GenPart(BaseMaster):
         parser.add_argument(
             '--unit-size',
             type=float,
-            default=30.0,
+            default=UNIT_SIZE_MM,
             help='Unit size in mm',
         )
         parser.add_argument(
             '--fillet-radius',
             type=float,
-            default=5.0,
+            default=FILLET_RADIUS_MM,
             help='Radius of fillet on corners in mm',
         )
         parser.add_argument(
@@ -54,42 +65,23 @@ class GenPart(BaseMaster):
         parser.add_argument(
             '--holes-num',
             type=int,
-            default=4,
+            default=HOLES_NUM,
             help='Number of holes in mm',
         )
         parser.add_argument(
             '--hole-diameter',
             type=float,
-            default=4.0,
+            default=HOLE_DIAMETER_MM,
             help='Diameter of hole in mm',
-        )
-
-        parser.add_argument(
-            '-n',
-            '--name',
-            type=str,
-            required=True,
-            help='Part name',
-        )
-        parser.add_argument(
-            '-d',
-            '--directory',
-            type=str,
-            default='.',
-            help='Output directory',
         )
 
     @staticmethod
     def run(args: Namespace):
-        print(f'Generating {args.name}...')
+        output_name = os.path.basename(args.output)
+        print(f'Generating {output_name}...')
 
         # prepare output directory
-        base_dir = args.directory
-        if base_dir == '.':
-            base_dir = os.getcwd()
-
-        part_dir = f'{base_dir}/{args.name}'
-        make_dir_with_user_ask(part_dir)
+        make_dir_with_user_ask(args.output)
 
         # generate part
         shape_wh = (args.width, args.height)
@@ -109,4 +101,4 @@ class GenPart(BaseMaster):
             fillet_radius=args.fillet_radius,
         )
         part_drawer.draw()
-        part_drawer.write(f'{part_dir}/{args.name}')
+        part_drawer.write(f'{args.output}/{output_name}')
