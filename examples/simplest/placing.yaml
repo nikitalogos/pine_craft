@@ -1,0 +1,19 @@
+work_area:
+  width_mm: 1500
+  height_mm: 750
+parts:
+  # paths should be specified as absolute or as relative to this file
+
+  # ~~~~beams~~~~
+  - path: "out/beam_3"
+    number: 50
+  - path: "out/beam_5_sparse"
+    number: 60
+  - path: "out/plate_10x10_sparse"
+    number: 25
+
+  # one box requires part_a x2 and part_b x2
+  - path: "out/box_part_a"
+    number: 120
+  - path: "out/box_part_b"
+    number: 120

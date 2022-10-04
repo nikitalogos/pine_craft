@@ -13,12 +13,21 @@ from constants.constants import UNIT_SIZE_MM, HOLE_DIAMETER_MM, MATERIAL_THICKNE
 
 class GenBox(BaseMaster):
     def __init__(self):
-        self.unit_size: float = None,
+        self.output: str = None
+        self.unit_size: float = None
         self.hole_diameter: float = None
         self.material_thickness: float = None
 
     @classmethod
     def make_subparser(cls, parser: CustomArgParser):
+        parser.add_argument(
+            '-o',
+            '--output',
+            type=str,
+            required=True,
+            help='Path to output directory. Results will be placed in subdirectories of this directory',
+        )
+
         parser.add_argument(
             '--unit-size',
             type=float,
@@ -139,8 +148,9 @@ class GenBox(BaseMaster):
                 self._part_b(drawing)
 
             name = f'box_part_{"a" if is_part_a else "b"}'
-            os.makedirs(name, exist_ok=True)
-            drawing.write(f'{name}/{name}{extension}')
+            base_dir = f'{self.output}/{name}'
+            os.makedirs(base_dir, exist_ok=True)
+            drawing.write(f'{base_dir}/{name}{extension}')
 
             # write metadata
             if idx == 0:
@@ -150,10 +160,13 @@ class GenBox(BaseMaster):
                     ],
                     "unit_size": self.unit_size,
                 }
-                with open(f'{name}/{name}.json', 'w') as outf:
+                with open(f'{base_dir}/{name}.json', 'w') as outf:
                     json.dump(data_json, outf, indent=4)
 
     def run(self, args: Namespace):
+        print('Generating box parts...')
+
+        self.output = args.output
         self.unit_size = args.unit_size
         self.hole_diameter = args.hole_diameter
         self.material_thickness = args.material_thickness

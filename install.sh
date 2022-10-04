@@ -16,6 +16,6 @@ EXE="/usr/bin/pine-craft"
 echo "~~~~~~~~~~~~~~~Creating executable '${EXE}'~~~~~~~~~~~~~~~"
 echo "#!/bin/bash
 # PYTHON_ARGCOMPLETE_OK
-$(realpath .)/venv/bin/python $(realpath .)/pine-craft.py" | sudo tee ${EXE}
+$(realpath .)/venv/bin/python $(realpath .)/pine-craft.py \"\$@\"" | sudo tee ${EXE}
 sudo chmod a+x ${EXE}
 echo "~~~~~~~~~~~~~~~Done!~~~~~~~~~~~~~~~"

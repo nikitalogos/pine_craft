@@ -44,7 +44,7 @@ class PlaceParts(BaseMaster):
     @staticmethod
     def run(args: Namespace):
         output_name = os.path.basename(args.output)
-        print(f'Generating {output_name}...')
+        print(f'Generating {output_name} from {os.path.basename(args.input)}...')
 
         # validate input
         with open(args.input, 'r') as inf:
