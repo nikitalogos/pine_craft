@@ -1,3 +1,4 @@
+rm -r out
 mkdir out
 cd out || exit
 

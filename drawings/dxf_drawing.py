@@ -2,11 +2,14 @@ import os
 import numpy as np
 import ezdxf
 import math
+from typing import NamedTuple
 
 from .base_drawing import BaseDrawing
 
 
 class DxfDrawing(BaseDrawing):
+    EPSILON = 1e-5
+
     def __init__(self, file_path=None):
         if file_path is None:
             dxf = ezdxf.new()
@@ -131,6 +134,96 @@ class DxfDrawing(BaseDrawing):
                 self.polygon_filled(points_t, color=e.dxf.color)
             else:
                 raise Exception(f'Unsupported element type: {dxf_type}')
+
+    def deduplicate(self):
+        class Line(NamedTuple):
+            x0: float
+            y0: float
+            x1: float
+            y1: float
+
+        vlines = []
+        hlines = []
+
+        for e in self.msp:
+            dxf_type = e.dxftype()
+            if dxf_type != 'LINE':
+                continue
+
+            line = Line(
+                x0=e.dxf.start[0],
+                y0=e.dxf.start[1],
+                x1=e.dxf.end[0],
+                y1=e.dxf.end[1],
+            )
+            if abs(line.x0 - line.x1) < self.EPSILON:
+                vlines.append(line)
+                e.destroy()
+            if abs(line.y0 - line.y1) < self.EPSILON:
+                hlines.append(line)
+                e.destroy()
+        self.msp.purge()
+
+        def get_non_empty_groups_with_same_value(lines, idx):
+            lines.sort(key=lambda line: line[idx])
+            batch = []
+            value = lines[0][idx]
+            for line in lines:
+                if abs(line[idx] - value) > self.EPSILON:
+                    if len(batch) > 0:  # this case is redundant, but still
+                        yield batch
+                    batch = []
+
+                value = line[idx]
+                batch.append(line)
+            if len(batch) > 0:
+                yield batch
+
+        def draw_lines(batch, is_vlines):
+            class Point(NamedTuple):
+                value: float
+                is_min: bool
+
+            x0 = batch[0].x0
+            y0 = batch[0].y0
+
+            points = []
+            for line in batch:
+                if is_vlines:
+                    p_min = min(line.y0, line.y1)
+                    p_max = max(line.y0, line.y1)
+                else:
+                    p_min = min(line.x0, line.x1)
+                    p_max = max(line.x0, line.x1)
+                points.append(Point(value=p_min, is_min=True))
+                points.append(Point(value=p_max, is_min=False))
+            points.sort(key=lambda point: point.value)
+
+            counter = 0
+            for i in range(len(points) - 1):
+                point = points[i]
+                point2 = points[i + 1]
+
+                counter += 1 if point.is_min else -1
+
+                if abs(point.value - point2.value) < self.EPSILON:
+                    continue
+
+                if counter > 0:
+                    if is_vlines:
+                        p0 = (x0, point.value)
+                        p1 = (x0, point2.value)
+                    else:
+                        p0 = (point.value, y0)
+                        p1 = (point2.value, y0)
+                    self.line(p0, p1)
+
+        x0_idx = 0
+        for batch in get_non_empty_groups_with_same_value(vlines, x0_idx):
+            draw_lines(batch, is_vlines=True)
+        y0_idx = 1
+        for batch in get_non_empty_groups_with_same_value(hlines, y0_idx):
+            draw_lines(batch, is_vlines=False)
 
     def write(self, file, is_no_ext=False):
         if is_no_ext:

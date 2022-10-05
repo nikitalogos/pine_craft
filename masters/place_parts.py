@@ -38,6 +38,11 @@ class PlaceParts(BaseMaster):
             default=20.0,
             help='Ratio between vertical and horizontal alignment of parts',
         )
+        parser.add_argument(
+            '--no-deduplicate',
+            action='store_true',
+            help='Disable deduplication (optimization of the cut length by removing duplicate lines)',
+        )
 
     @staticmethod
     def run(args: Namespace):
@@ -106,4 +111,12 @@ class PlaceParts(BaseMaster):
         )
         placer.place()
         placer.draw()
+
+        if not args.no_deduplicate:
+            dwg = placer.dxf_drawing
+            old_len_m = dwg.get_total_lines_length_mm() / 1000
+            dwg.deduplicate()
+            new_len_m = dwg.get_total_lines_length_mm() / 1000
+            print(f'Deduplication done! Cut length optimized: {old_len_m:.3f}m -> {new_len_m:.3f}m')
+
         placer.write(file_no_ext=f'{base_dir}/{name}')

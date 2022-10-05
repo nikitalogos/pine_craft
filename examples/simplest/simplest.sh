@@ -1,3 +1,5 @@
+rm -r out
+
 echo '~~~~~~~~~~Creating regular parts~~~~~~~~~~'
 pine-craft gen-part -o out/beam_3 -w 1 -t 3
 pine-craft gen-part -o out/beam_5_sparse -w 1 -t 5 -p "x:1 y:2"
