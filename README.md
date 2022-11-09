@@ -30,7 +30,7 @@ Examples of items made of Pine Craft can be found [here](docs/examples.md).
 - The Pine Craft constructor consists of parts made of plywood on a laser cutter and screws to fasten them together.
 - Parts have a rectangular shape and their dimensions are multiples of the base segment size - `unit_size`.
 - Holes for connecting parts form a pattern that repeats with the `unit_size` step
-    - One element of the pattern consists of 4 holes evenly distributed on the circle with the diameter of `unit_size/2`.
+    - One element of the pattern consists of 4 holes evenly distributed in the circle with the diameter of `unit_size/2`.
         - This arrangement of holes allows you to connect parts along and across
         - The `unit_size/2` diameter of the circle allows you to connect parts with a half step
 
@@ -63,7 +63,7 @@ I use hexagon head screws, as they wear out less when reused and have a lower ch
 
 For M4 screws, a hex key with a side of 3mm is suitable. It is better to take a hex key with a convenient handle, since you will have to tinker a lot of screws :) And even better to buy a compact screwdriver!
 
-It is better to use nuts with a flange - in theory they should cling better to the plywood and prevent unscrewing. To support the nuts, you can use a 7 mm wrench, but in fact you can do without it.
+It is better to use nuts with a flange - in theory they should cling better to the plywood and prevent unscrewing. To support the nuts, you can use a 7 mm wrench, but in fact, you can do without it.
 
 Here is the bill of materials for screws and nuts:
 1. DIN912 4x20 screw
@@ -81,7 +81,21 @@ Here are the default dimensions:
 
 However, all the dimensions of the constructor can be customized for your purpose.
 
+## Manufacturing
 
+Pine Craft is recommended to be made of pine plywood, as it is a durable and eco-friendly material. It is not recommended to use plastic, acrylic, as well as chipboard materials.
+
+For manufacturing, it is recommended to use a laser cutter, not a milling cutter, since it is faster and utilizes the sheet completely because no technical clearances between parts are needed.
+
+You can use a built-in utility `pine-craft place-parts` to create a cutting layout in the .dxf format. This utility only supports laser fabrication, as it neglects the gaps between the parts. This is done intentionally, as it allows you to optimize the cutting length by an average of 25% since the contours of neighboring parts are cut simultaneously. The manufacturing time is also reduced by a quarter. With a laser cut width of about 1mm, this optimization does not harm the geometry of the constructor.
+
+Here is the example of the auto-generated cutting layout. It contains parts needed to make a [stool](docs/examples.md):
+
+![Stool layout](docs/images/stool_layout.jpg)
+
+It is important for beams to have holes along the entire length, but this is not necessary for plates. A large number of holes greatly increases the cutting time - not only due to the length of the cut, but also due to the loss of time on moving the machine head between the holes. Therefore, it is recommended to use a sparse pattern for plates.
+
+In practice, only the holes on the edges of the plate are used. However, I also prefer to leave holes in the center for aesthetic purposes.
 
 ## Command line tool
 
@@ -92,4 +106,3 @@ sudo install.sh
 # --> restart shell here to enable autocompletion
 pine-craft --help
 ```
-
