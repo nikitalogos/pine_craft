@@ -99,10 +99,49 @@ In practice, only the holes on the edges of the plate are used. However, I also 
 
 ## Command line tool
 
-Global installation:
+### Installation
+
+Tested on Ubuntu 20.04. Should support Ubuntu/Debian out of the box, but for other Linux distributions may require tweaking. It's a Python3 program anyway, so it can be theoretically started on Mac/Windows, but you may need to change the code :)
+
+#### Install globally
+
+1. Put this directory to the place where all your programs live. Do not move it after installations or links will break!
+2. Enter the directory `cd pine_craft`
+3. Run script `./install.sh`. What it does:
+   1. installs packages `python3.9` and `python3.9-venv` 
+      1. (if you want to use it with different version of python, you can edit `install.sh`. However, I tested it only with `python3.9`)
+   2. creates virtual environment `venv` in directory `pine_craft`
+   3. installs argcomplete globally - [like that](https://pypi.org/project/argcomplete/#activating-global-completion)
+   4. creates executable `/usr/bin/pine-craft` pointing to the `./pine-craft.py`
+4. Restart your shell to make autocompletion work
+5. Run `pine-craft --help`
+
+#### Uninstall
+
+1. Remove python3.9 if you do not need it (which is unlikely) - `sudo apt-get uninstall python3.9 python3.9-venv`
+2. Remove python auto-completion if you do not need it (but better do not do it, because other programs may use it)
+    ```
+   # depends on where it is placed on your file system:
+   rm /etc/bash_completion.d/python-argcomplete
+   rm ~/.bash_completion.d/python-argcomplete
+   ```
+3. Remove executable `sudo rm /usr/bin/pine-craft`
+4. remove virtual env directory `cd pine_craft; sudo rm -r venv`
+
+#### Run without installation
 
 ```bash
-sudo install.sh
-# --> restart shell here to enable autocompletion
-pine-craft --help
+python3 ./pine-craft.py
 ```
+
+### Usage
+
+Utility `pine-craft` has 4 sub-utilities:
+1. `gen-box` - generate parts for `Cubes`
+2. `gen-part` - generate regular parts
+3. `place-parts` - generate optimal cutting layout from parts. Reads config from `.yaml` file
+4. `cut-length` - compute total curves length in a `.dxf` file
+
+Each utility has its own help: `pine-craft gen-box --help`
+
+Examples of usage are placed under the `examples` folder.
