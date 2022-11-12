@@ -131,7 +131,14 @@ Tested on Ubuntu 20.04. Should support Ubuntu/Debian out of the box, but for oth
 #### Run without installation
 
 ```bash
-python3 ./pine-craft.py
+python3 ./pine-craft.py --help
+```
+
+or
+
+```bash
+alias pine-craft="python3 ./pine-craft.py"
+pine-craft --help
 ```
 
 ### Usage
