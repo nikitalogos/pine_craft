@@ -16,7 +16,7 @@ This repository contains a set of utilities for self-manufacturing Pine Craft pa
 
 Watch this short video to learn how you can build with the Pine Craft:
 
-[![Pine Craft Promo](docs/images/youtube_teaser.jpg)](https://www.youtube.com/watch?v=A3GeZmPa8k8 "Pine Craft Promo")
+[![Pine Craft Promo](docs/images/youtube_teaser.png)](https://www.youtube.com/watch?v=A3GeZmPa8k8 "Pine Craft Promo")
 
 ## Examples
 
