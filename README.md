@@ -1,6 +1,6 @@
-![Pine Craft intro](docs/images/pine_craft_intro.jpg)
+![](docs/images/logo.png)
 
-# Pine Craft
+# Pine Craft: open-source generative constructor
 
 ## About
 
@@ -14,6 +14,10 @@ Pine Craft is suitable for use at home, as it is based on eco-friendly material 
 
 This repository contains a set of utilities for self-manufacturing Pine Craft parts, as well as detailed instructions for using this constructor.
 
+Watch this short video to learn how you can build with the Pine Craft:
+
+[![Pine Craft Promo](docs/images/youtube_teaser.jpg)](https://www.youtube.com/watch?v=A3GeZmPa8k8 "Pine Craft Promo")
+
 ## Examples
 
 You can find sample layout generations under `examples` folder. There are:
@@ -22,6 +26,8 @@ You can find sample layout generations under `examples` folder. There are:
 3. `universal_kit` - basic starter kit to manufacture if you want to play around with Pine Craft
 
 Examples of items made of Pine Craft can be found [here](docs/examples.md).
+
+![Pine Craft intro](docs/images/pine_craft_intro.jpg)
 
 ## Set of parts
 

@@ -3,12 +3,14 @@ import numpy as np
 
 
 class PatternDrawer:
-    def __init__(self, pattern_str, shape_wh, unit_size, first_hole_angle_deg=0, holes_num=4, hole_diameter=4):
+    def __init__(self, pattern_str, shape_wh, unit_size, first_hole_angle_deg=0,
+                 holes_num=4, hole_diameter=4, holes_ring_radius_norm=0.5):
         self.shape_wh = shape_wh
         self.unit_size = unit_size
         self.first_hole_angle_deg = first_hole_angle_deg
         self.holes_num = holes_num
         self.hole_diameter = hole_diameter
+        self.holes_ring_radius_norm = holes_ring_radius_norm
 
         self.pattern_mask = self._parse_pattern_str(pattern_str)
 
@@ -76,10 +78,10 @@ class PatternDrawer:
         angles = np.deg2rad(self.first_hole_angle_deg) + \
                  np.linspace(0, 2 * np.pi, self.holes_num, endpoint=False)
 
-        us = self.unit_size
+        us_half = self.unit_size / 2
         for angle in angles:
-            x = (us / 2) + np.cos(angle) * (us / 4)
-            y = (us / 2) - np.sin(angle) * (us / 4)
+            x = us_half * (1 + np.cos(angle) * self.holes_ring_radius_norm)
+            y = us_half * (1 - np.sin(angle) * self.holes_ring_radius_norm)
 
             drawing.circle(
                 (x_mm + x, y_mm + y),
@@ -94,6 +96,7 @@ class PatternDrawer:
             'first_hole_angle_deg': self.first_hole_angle_deg,
             'holes_num': self.holes_num,
             'hole_diameter': self.hole_diameter,
+            'holes_ring_radius_norm': self.holes_ring_radius_norm
         }
 
     def draw(self, drawing):

@@ -1,13 +1,31 @@
 import os
+import argparse
 from argparse import Namespace
 
-from constants.constants import UNIT_SIZE_MM, HOLE_DIAMETER_MM, FILLET_RADIUS_MM, HOLES_NUM
+from constants.constants import UNIT_SIZE_MM, HOLE_DIAMETER_MM, FILLET_RADIUS_MM, HOLES_NUM, HOLES_RING_RADIUS_NORM
 
 from masters.base_master import BaseMaster
 from tools.pattern_drawer import PatternDrawer
 from tools.part_drawer import PartDrawer
 from utils.utils import make_dir_with_user_ask
 from utils.custom_arg_parser import CustomArgParser
+
+
+def _ranged_type(value_type, min_value, max_value):
+    """
+    source: https://stackoverflow.com/questions/55324449/how-to-specify-a-minimum-or-maximum-float-value-with-argparse
+    """
+
+    def range_checker(arg: str):
+        try:
+            f = value_type(arg)
+        except ValueError:
+            raise argparse.ArgumentTypeError(f'must be a valid {value_type}')
+        if f < min_value or f > max_value:
+            raise argparse.ArgumentTypeError(f'must be within [{min_value}, {max_value}]')
+        return f
+
+    return range_checker
 
 
 class GenPart(BaseMaster):
@@ -66,7 +84,14 @@ class GenPart(BaseMaster):
             '--holes-num',
             type=int,
             default=HOLES_NUM,
-            help='Number of holes in mm',
+            help='Number of holes',
+        )
+        parser.add_argument(
+            '--holes-ring-radius-norm',
+            type=_ranged_type(float, 0.0, 2**0.5),
+            default=HOLES_RING_RADIUS_NORM,
+            help='Radius of circular pattern where holes will be placed. Normalized to the "unit-size". '
+                 '1.0 means half of "unit-size". Should be a float in range 0.0..1.41',
         )
         parser.add_argument(
             '--hole-diameter',
@@ -92,7 +117,8 @@ class GenPart(BaseMaster):
             unit_size=args.unit_size,
             first_hole_angle_deg=args.first_hole_angle_deg,
             holes_num=args.holes_num,
-            hole_diameter=args.hole_diameter
+            hole_diameter=args.hole_diameter,
+            holes_ring_radius_norm=args.holes_ring_radius_norm,
         )
         part_drawer = PartDrawer(
             shape_wh=shape_wh,
