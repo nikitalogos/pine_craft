@@ -7,7 +7,7 @@ from drawings.dxf_drawing import DxfDrawing
 
 
 class PartDrawer:
-    def __init__(self, shape_wh, unit_size, pattern_drawer, fillet_radius=5, drawings: Sequence[BaseDrawing] = None):
+    def __init__(self, shape_wh, unit_size, pattern_drawers=(), fillet_radius=5, drawings: Sequence[BaseDrawing] = None):
         if drawings is None:
             drawings = [
                 SvgDrawing(),
@@ -18,7 +18,7 @@ class PartDrawer:
 
         self.shape_wh = shape_wh
         self.unit_size = unit_size
-        self.pattern_drawer = pattern_drawer
+        self.pattern_drawers = pattern_drawers
         self.fillet_radius = fillet_radius
 
     def _draw_border(self, drawing):
@@ -80,13 +80,14 @@ class PartDrawer:
     def draw(self):
         for drawing in self.drawings:
             self._draw_border(drawing)
-            self.pattern_drawer.draw(drawing)
+            for pd in self.pattern_drawers:
+                pd.draw(drawing)
 
     def get_meta_dict(self):
         return {
             'shape_wh': self.shape_wh,
             'unit_size': self.unit_size,
-            'pattern_drawer': self.pattern_drawer.get_meta_dict(),
+            'pattern_drawers': [p.get_meta_dict() for p in self.pattern_drawers],
             'fillet_radius': self.fillet_radius,
         }
 

@@ -54,13 +54,6 @@ class GenPart(BaseMaster):
             required=True,
             help='Part height in units',
         )
-        parser.add_argument(
-            '-p',
-            '--pattern',
-            type=str,
-            default='x:1 y:1',
-            help='String that defines units pattern',
-        )
 
         parser.add_argument(
             '--unit-size',
@@ -74,30 +67,44 @@ class GenPart(BaseMaster):
             default=FILLET_RADIUS_MM,
             help='Radius of fillet on corners in mm',
         )
+
+        # these arguments specify a pattern. They can be called multiple times
+        parser.add_argument(
+            '-p',
+            '--pattern',
+            type=str,
+            default=['x:1 y:1'],
+            help='String that defines units pattern',
+            action='append',
+        )
         parser.add_argument(
             '--first-hole-angle-deg',
             type=float,
-            default=0.0,
+            default=[0.0],
             help='Angle of first hole from zero in degrees (counterclockwise, zero is from the right)',
+            action='append',
         )
         parser.add_argument(
             '--holes-num',
             type=int,
-            default=HOLES_NUM,
+            default=[HOLES_NUM],
             help='Number of holes',
+            action='append',
         )
         parser.add_argument(
             '--holes-ring-radius-norm',
             type=_ranged_type(float, 0.0, 2**0.5),
-            default=HOLES_RING_RADIUS_NORM,
+            default=[HOLES_RING_RADIUS_NORM],
             help='Radius of circular pattern where holes will be placed. Normalized to the "unit-size". '
                  '1.0 means half of "unit-size". Should be a float in range 0.0..1.41',
+            action='append',
         )
         parser.add_argument(
             '--hole-diameter',
             type=float,
-            default=HOLE_DIAMETER_MM,
+            default=[HOLE_DIAMETER_MM],
             help='Diameter of hole in mm',
+            action='append',
         )
 
     @staticmethod
@@ -111,19 +118,40 @@ class GenPart(BaseMaster):
         # generate part
         shape_wh = (args.width, args.height)
 
-        pattern_drawer = PatternDrawer(
+        pattern_params = dict(
             pattern_str=args.pattern,
-            shape_wh=shape_wh,
-            unit_size=args.unit_size,
             first_hole_angle_deg=args.first_hole_angle_deg,
             holes_num=args.holes_num,
             hole_diameter=args.hole_diameter,
             holes_ring_radius_norm=args.holes_ring_radius_norm,
         )
+
+        # if user passes at least one param - it should overwrite default param value
+        for k, v in pattern_params.items():
+            if len(v) > 1:
+                v = v[1:]
+                pattern_params[k] = v
+
+        patterns_num = max([len(v) for v in pattern_params.values()])
+        print(f'You specified {patterns_num} pattern(s)!')
+
+        pattern_drawers = []
+        for idx in range(patterns_num):
+            kwargs = {
+                k: v[idx] if idx < len(v) else v[-1] for k, v in pattern_params.items()
+            }
+            print(f'Pattern {idx + 1}: {kwargs}')
+
+            pattern_drawer = PatternDrawer(
+                shape_wh=shape_wh,
+                unit_size=args.unit_size,
+                **kwargs,
+            )
+            pattern_drawers.append(pattern_drawer)
         part_drawer = PartDrawer(
             shape_wh=shape_wh,
             unit_size=args.unit_size,
-            pattern_drawer=pattern_drawer,
+            pattern_drawers=pattern_drawers,
             fillet_radius=args.fillet_radius,
         )
         part_drawer.draw()
