@@ -9,7 +9,7 @@ echo '~~~~~~~~~~Creating box parts~~~~~~~~~~'
 pine-craft gen-box -o out
 
 echo '~~~~~~~~~~Place parts on sheet for CNC cutting~~~~~~~~~~'
-pine-craft place-parts -i placing.yaml -o out --hv_ratio 100000
+pine-craft place-parts -i placing.yaml -o out
 
 echo '~~~~~~~~~~Compute total cutting length~~~~~~~~~~'
 pine-craft cut-length -i out/placing/placing.dxf

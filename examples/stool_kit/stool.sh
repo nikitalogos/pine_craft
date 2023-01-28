@@ -21,4 +21,4 @@ pine-craft gen-box
 # ~~~~~~~~~~~~~~~~place parts~~~~~~~~~~~~~~~~~~~~~~
 cd ../..
 
-pine-craft place-parts -i stool.yaml -o out --hv_ratio 100000
+pine-craft place-parts -i stool.yaml -o out

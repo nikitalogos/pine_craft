@@ -33,15 +33,21 @@ class PlaceParts(BaseMaster):
             help='Path to output directory. Results will be placed in subdirectory of this directory',
         )
         parser.add_argument(
-            '--hv_ratio',
+            '--hv-ratio',
             type=float,
-            default=20.0,
+            default=1e5,
             help='Ratio between vertical and horizontal alignment of parts',
         )
         parser.add_argument(
             '--no-deduplicate',
             action='store_true',
             help='Disable deduplication (optimization of the cut length by removing duplicate lines)',
+        )
+        parser.add_argument(
+            '-v',
+            '--verbose',
+            action='store_true',
+            help='Show parts placing order.',
         )
 
     @staticmethod
@@ -108,6 +114,7 @@ class PlaceParts(BaseMaster):
             work_area_wh=work_area_wh,
             unit_size=unit_size,
             h_to_v_coef_ratio=args.hv_ratio,
+            verbose=args.verbose
         )
         placer.place()
         placer.draw()

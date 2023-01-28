@@ -66,8 +66,7 @@ class GenBox(BaseMaster):
                 color='red',
             )
 
-    @staticmethod
-    def _make_symmetric_shape(drawing: BaseDrawing, path_rel_to_center: np.ndarray):
+    def _make_symmetric_shape(self, drawing: BaseDrawing, path_rel_to_center: np.ndarray):
         """Given a path in the I-st quadrant, will mirror it horizontally and vertically and then draw"""
         for x_mirr in [-1, 1]:
             for y_mirr in [-1, 1]:
@@ -76,7 +75,7 @@ class GenBox(BaseMaster):
 
                     line[:, 0] *= x_mirr
                     line[:, 1] *= y_mirr
-                    line += 15
+                    line += self.unit_size * 0.5
 
                     drawing.line(
                         p0=line[0].tolist(),

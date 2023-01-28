@@ -40,5 +40,5 @@ pine-craft gen-box
 # ~~~~~~~~~~~~~~~~place parts~~~~~~~~~~~~~~~~~~~~~~
 cd ../..
 
-pine-craft place-parts -i placing_beams_and_plates.yaml -o out --hv_ratio 100000
-pine-craft place-parts -i placing_boxes.yaml -o out --hv_ratio 100000
+pine-craft place-parts -i placing_beams_and_plates.yaml -o out
+pine-craft place-parts -i placing_boxes.yaml -o out

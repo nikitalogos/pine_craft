@@ -36,7 +36,8 @@ class PartsPlacer:
             parts: Sequence[Part],
             work_area_wh: [int, int],
             unit_size: float = 1.0,
-            h_to_v_coef_ratio: float = 20.0
+            h_to_v_coef_ratio: float = 1e5,
+            verbose=False,
     ):
         for part in parts:
             assert part.number > 0, f'Incorrect number of parts for part "{part.name}": it should be >= 0'
@@ -45,6 +46,7 @@ class PartsPlacer:
         self.work_area_wh = work_area_wh
         self.unit_size = unit_size
         self.h_to_v_coef_ratio = h_to_v_coef_ratio
+        self.verbose = verbose
 
         parts_by_name = {}
         for part in parts:
@@ -104,6 +106,7 @@ class PartsPlacer:
         ]
         parts_queue: MutableSequence[Part] = list(copy.deepcopy(self.parts))
         placed_parts = []
+        idx = 0
         while True:
             if len(parts_queue) == 0:
                 break
@@ -188,7 +191,11 @@ class PartsPlacer:
             if part.number == 0:
                 del parts_queue[part_idx]
 
-            print('Placing', part.name)
+            if self.verbose:
+                print(f'{idx}. place {part.name}')
+                idx += 1
+            else:
+                print('.', end='')
             # ~~~~~debug~~~~~~~
             # import matplotlib.pyplot as plt
             # h, w = score_maps_by_sheet[0].shape
@@ -212,6 +219,9 @@ class PartsPlacer:
                 pos_xy=pos_xy
             )
             placed_parts.append(placed_part)
+
+        if not self.verbose:
+            print()
 
         self.placed_parts = placed_parts
         self.sheets_number = len(score_maps_by_sheet)

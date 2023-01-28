@@ -23,9 +23,11 @@ Watch this short video to learn how you can build with the Pine Craft:
 You can find sample layout generations under `examples` folder. There are:
 1. `simplest` - minimal viable example
 2. `stool_kit` - a set of parts to assemble a stool
-3. `universal_kit` - basic starter kit to manufacture if you want to play around with Pine Craft
+3. `universal_kit` - basic starter kit to manufacture if you want to play around with the Pine Craft
 
-Examples of items made of Pine Craft can be found [here](docs/examples.md).
+Examples of items made of Pine Craft can be found here:
+
+- [docs/examples.md](docs/examples.md)
 
 ![Pine Craft intro](docs/images/pine_craft_intro.jpg)
 
@@ -103,6 +105,19 @@ It is important for beams to have holes along the entire length, but this is not
 
 In practice, only the holes on the edges of the plate are used. However, I also prefer to leave holes in the center for aesthetic purposes.
 
+Cutting layout has 3 colors: black, red and green. Black is used for contours of parts, red is for holes and green is for grooves. In .dxf these colors have numbers: black - 7, red - 1, green - 3.  
+
+> In dxf color 7 is used for both black and white. That's why contours are white in the picture :)
+
+Grooves are needed in cube parts to give screws space. They should be 0.1-0.2 mm deep. To manufacture grooves, you should set the laser cut in engraving mode and let in engrave green polygons. You will need to find the appropriate power and speed to achieve the desired depth as it depends on the laser cutter. Try it on a small piece of plywood before cutting the main layout.
+
+It's important to cut everything in the right order:
+1. cut holes and make grooves
+2. cutout parts
+
+This order is needed because after the part is cut out, it can displace itself, so the holes cut after that will be misaligned.
+
+
 ## Command line tool
 
 ### Installation
@@ -146,6 +161,20 @@ or
 alias pine-craft="python3 ./pine-craft.py"
 pine-craft --help
 ```
+
+You may need to install additional packages to your Python via `python3 -m pip install -r requirements.txt`.
+
+If you don't want to install them globally - create a virtual environment!
+
+```bash
+python3 -m venv venv
+venv/bin/pip install --upgrade pip && venv/bin/pip install -r requirements.txt
+venv/bin/python3 ./pine-craft.py --help
+```
+
+> If you are not familiar with Python, virtual environment is just a regular directory, where all the libraries will be installed.  So, to uninstall everything all you need is to delete the folder :)
+> 
+> You can read about venv [here](https://docs.python.org/3/library/venv.html).
 
 ### Usage
 

@@ -1,0 +1,9 @@
+work_area:
+  width_mm: 1500
+  height_mm: 750
+parts:
+  # paths should be specified as absolute or as relative to this file
+
+  # ~~~~beams~~~~
+  - path: "out/beam_3"
+    number: 500
