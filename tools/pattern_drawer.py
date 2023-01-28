@@ -19,12 +19,14 @@ class PatternDrawer:
 
         mask = np.zeros(self.shape_wh, dtype=bool)
 
-        res = re.fullmatch('[o.]+', pattern_str)
+        res = re.fullmatch('[o. ]+', pattern_str)
         if res is not None:
+            pattern_str = pattern_str.replace(' ', '')
+
             w, h = self.shape_wh
             size = w * h
 
-            pattern_len = len(res)
+            pattern_len = len(pattern_str)
             if pattern_len != size:
                 print(f'Wrong pattern string length! Expected {w}*{h}={size} symbols, found {pattern_len}')
                 return None
@@ -33,7 +35,9 @@ class PatternDrawer:
                 for j in range(h):
                     idx = i + j * w
                     char = pattern_str[idx]
-                    mask = [i, j] = char == 'o'
+                    mask[i, j] = char == 'o'
+
+            return mask
 
         comma_separated_numbers = '[0-9]+(,[0-9]+)*'
         regex = f'x:{comma_separated_numbers}\s+y:{comma_separated_numbers}'
@@ -71,8 +75,9 @@ class PatternDrawer:
             mask[:] = True
             mask[~valid_x, :] = False
             mask[:, ~valid_y] = False
+            return mask
 
-        return mask
+        raise Exception(f'Unrecognized pattern: "{pattern_str}"')
 
     def _draw_circle_group(self, drawing, x_mm, y_mm):
         angles = np.deg2rad(self.first_hole_angle_deg) + \

@@ -6,6 +6,12 @@ This stool is one of my first designs from Pine Craft. I have special feelings t
 
 ![Stool](images/assembly_stool.jpg)
 
+### Stool v2
+
+Improved version with longer beams for legs.
+
+![Stool](images/assembly_stool_v2.jpg)
+
 ### Chair
 
 If you add a back to the stool, you will get a chair! The rigid back helps to keep your posture, and also serves as an excellent clothes hanger :)
@@ -24,6 +30,12 @@ It is especially easy to make racks from Pine Craft. On the left there is a rack
 The surface of the commode can be increased if you put such a shelf on it.
 
 ![Shelf over commode](images/assembly_shelf_over_commode.jpg)
+
+### Cute accessories holder
+
+Add some Pine Craft to your boring white wall :)
+
+![Accessories stand](images/accessories_stand.jpg)
 
 ### Life Hacks
 

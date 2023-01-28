@@ -24,6 +24,8 @@ You can find sample layout generations under `examples` folder. There are:
 1. `simplest` - minimal viable example
 2. `stool_kit` - a set of parts to assemble a stool
 3. `universal_kit` - basic starter kit to manufacture if you want to play around with the Pine Craft
+4. `advanced_features` - example-based tutorial on how to generate custom parts with `pine-craft` tool
+5. `ready_layouts` - ready .dxf files for you to cut on laser
 
 Examples of items made of Pine Craft can be found here:
 
@@ -87,7 +89,7 @@ Here are the default dimensions:
 2. Plywood thickness is 6 mm
 3. Screws are M4
 
-However, all the dimensions of the constructor can be customized for your purpose.
+However, all the dimensions of the constructor can be customized for your purpose (see `examples/advanced_features`).
 
 ## Manufacturing
 
