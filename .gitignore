@@ -1,0 +1,6 @@
+**.idea
+**__pycache__
+venv
+examples/**/out
+examples/**/out2
+examples/**/out3
