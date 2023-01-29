@@ -25,7 +25,7 @@ You can find sample layout generations under `examples` folder. There are:
 2. `stool_kit` - a set of parts to assemble a stool
 3. `universal_kit` - basic starter kit to manufacture if you want to play around with the Pine Craft
 4. `advanced_features` - example-based tutorial on how to generate custom parts with `pine-craft` tool
-5. `ready_layouts` - ready .dxf files for you to cut on laser
+5. `ready_layouts` - ready .dxf files for you to cut on laser. You can view them via [LibreCAD](https://www.librecad.org/)
 
 Examples of items made of Pine Craft can be found here:
 
@@ -120,11 +120,11 @@ It's important to cut everything in the right order:
 This order is needed because after the part is cut out, it can displace itself, so the holes cut after that will be misaligned.
 
 
-## Command line tool
-
-### Installation
+## Install CLI
 
 Tested on Ubuntu 20.04. Should support Ubuntu/Debian out of the box, but for other Linux distributions may require tweaking. It's a Python3 program anyway, so it can be theoretically started on Mac/Windows, but you may need to change the code :)
+
+### Linux
 
 #### Install globally
 
@@ -178,7 +178,33 @@ venv/bin/python3 ./pine-craft.py --help
 > 
 > You can read about venv [here](https://docs.python.org/3/library/venv.html).
 
-### Usage
+### Windows
+
+1. If you don't have python:
+   1. Download python3 installer from [here](https://www.python.org/downloads/)
+   2. read the instruction [here](https://docs.python.org/3/using/windows.html)
+   3. open the command line (not a power shell!)
+   4. type `py --version`
+   5. if it responds with python version, that's it! 
+   6. otherwise, re-read the instruction :)
+2. open command line (not a power shell!)
+3. navigate to the project directory `cd <path>` (you can copy path from file explorer)
+4. make venv
+```cmd
+py -m venv venv
+venv\Scripts\activate.bat
+pip install -r requirements.txt
+```
+5. run: `py pine-craft.py --help`
+6. you can create alias:
+```cmd
+doskey pine-craft=py C:\path\to\pine-craft.py $*
+pine-craft --help
+```
+7. `.sh` files won't run on Windows, but you can run `examples/simplest/simplest.bat`
+
+
+## Use CLI
 
 Utility `pine-craft` has 4 sub-utilities:
 1. `gen-box` - generate parts for `Cubes`

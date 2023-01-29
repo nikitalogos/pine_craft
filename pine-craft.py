@@ -1,4 +1,3 @@
-#!/bin/sh
 # PYTHON_ARGCOMPLETE_OK
 
 

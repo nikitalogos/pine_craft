@@ -75,7 +75,7 @@ class GenPart(BaseMaster):
             type=str,
             default=['x:1 y:1'],
             help='String that defines units pattern. There are two ways to define pattern:\n'
-                 '1. "x:2 y:3" - define strides per x and per y\n'
+                 '1. "x:2 y:3,1" - define strides per x and per y\n'
                  '2. "ooo o.. oo. o.o" - define whether to put holes in this unit or not row by row.\n'
                  '   "o" means yes, "." means no.\n'
                  '   Spaces are optional but are useful to visually split rows to not to make a mistake.',
